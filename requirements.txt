@@ -1,0 +1,5 @@
+bentoml>=1.3.5
+fastapi==0.115.0
+faster-whisper==1.0.0
+numpy~=1.0
+pipecat-ai[cartesia,openai,silero]

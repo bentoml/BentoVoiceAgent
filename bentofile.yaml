@@ -1,0 +1,17 @@
+service: "service.py:TwilioBot"
+labels:
+  owner: bentoml-team
+  project: gallery
+include:
+  - "*.py"
+python:
+  requirements_txt: requirements.txt
+docker:
+  python_version: 3.11
+  cuda_version: 12.1
+  system_packages:
+    - ffmpeg
+envs:
+  - name: CARTESIA_API_KEY
+  - name: SERVICE_URL
+    value: "fillin"
