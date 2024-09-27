@@ -28,7 +28,6 @@ async def start_call():
   <Pause length="40"/>
 </Response>
     """
-    print(tmpl.format(service_url=service_url))
     return HTMLResponse(content=tmpl.format(service_url=service_url), media_type="application/xml")
 
 @bentoml.service(
