@@ -11,13 +11,6 @@ from starlette.responses import HTMLResponse
 LANGUAGE_CODE = "en"
 
 app = FastAPI()
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # Allow all origins for testing
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
 @app.post("/start_call")
 async def start_call():
@@ -64,7 +57,6 @@ class TwilioBot:
         start_data = websocket.iter_text()
         await start_data.__anext__()
         call_data = json.loads(await start_data.__anext__())
-        print(call_data, flush=True)
         stream_sid = call_data["start"]["streamSid"]
         print("WebSocket connection accepted")
         await run_bot(websocket, stream_sid, whisper_model=self.whisper_model)
