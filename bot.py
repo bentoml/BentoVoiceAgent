@@ -1,6 +1,7 @@
 import os
 import sys
 
+import aiohttp
 from pipecat.frames.frames import EndFrame, LLMMessagesFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
@@ -21,6 +22,7 @@ from pipecat.serializers.twilio import TwilioFrameSerializer
 from loguru import logger
 
 from whisper_bento import BentoWhisperSTTService
+from simple_xtts import SimpleXTTSService
 
 logger.remove(0)
 logger.add(sys.stderr, level="DEBUG")
@@ -39,17 +41,23 @@ async def run_bot(websocket_client, stream_sid, whisper_model):
         ),
     )
 
+    openai_base_url = os.getenv("OPENAI_SERVICE_URL")
+    assert openai_base_url
     llm = OpenAILLMService(
-        base_url="https://bentovllm-llama-3-1-70-b-instruct-awq-service-slan-d3767914.mt-guc1.bentoml.ai/v1",
+        base_url=openai_base_url,
         api_key="n/a",
         model="hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
     )
 
     stt = BentoWhisperSTTService(model=whisper_model)
 
-    tts = CartesiaTTSService(
-        api_key=os.getenv("CARTESIA_API_KEY"),
-        voice_id="79a125e8-cd45-4c13-8a67-188112f4dd22",  # British Lady
+    xtts_base_url = os.getenv("XTTS_SERVICE_URL")
+    assert xtts_base_url
+    client = aiohttp.ClientSession()
+    tts = SimpleXTTSService(
+        base_url=xtts_base_url,
+        language="en",
+        aiohttp_session=client,
     )
 
     messages = [

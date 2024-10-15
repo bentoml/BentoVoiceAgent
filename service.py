@@ -15,7 +15,7 @@ app = FastAPI()
 @app.post("/start_call")
 async def start_call():
     print("POST TwiML")
-    service_url = os.environ.get("SERVICE_URL") or ""
+    service_url = os.environ.get("BENTOCLOUD_DEPLOYMENT_URL") or ""
     assert(service_url)
     if service_url.startswith("http"):
         from urllib.parse import urlparse

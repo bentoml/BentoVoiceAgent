@@ -14,7 +14,7 @@ from typing import AsyncGenerator
 import numpy as np
 
 from pipecat.frames.frames import ErrorFrame, Frame, TranscriptionFrame
-from pipecat.services.ai_services import STTService
+from pipecat.services.ai_services import SegmentedSTTService
 from pipecat.utils.time import time_now_iso8601
 
 from loguru import logger
@@ -38,7 +38,7 @@ class Model(Enum):
     DISTIL_MEDIUM_EN = "Systran/faster-distil-whisper-medium.en"
 
 
-class BentoWhisperSTTService(STTService):
+class BentoWhisperSTTService(SegmentedSTTService):
     """Class to transcribe audio with a locally-downloaded Whisper model"""
 
     def __init__(
@@ -77,6 +77,7 @@ class BentoWhisperSTTService(STTService):
         audio_float = np.frombuffer(audio, dtype=np.int16).astype(np.float32) / 32768.0
 
         segments, _ = await asyncio.to_thread(self._model.transcribe, audio_float)
+
         text: str = ""
         for segment in segments:
             if segment.no_speech_prob < self._no_speech_prob:
