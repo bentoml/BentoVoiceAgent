@@ -13,6 +13,4 @@ docker:
     - ffmpeg
 envs:
   - name: OPENAI_SERVICE_URL
-    value: "placeholder"
   - name: XTTS_SERVICE_URL
-    value: "placeholder"
