@@ -22,8 +22,8 @@ pip install -U bentoml
 
 Deploy the LLM and XTTS models by following the instructions provided in their respective repositories.
 
-- Deploy LLM with BentoVLLM
-- Deploy XTTS with BentoXTTSStreaming
+- Deploy LLM with [BentoVLLM](https://github.com/bentoml/BentoVLLM/tree/main/llama3.1-70b-instruct-awq)
+- Deploy XTTS with [BentoXTTSStreaming](https://github.com/bentoml/BentoXTTSStreaming)
 
 Once the models are deployed, you can obtain their API endpoints from BentoCloud. These endpoints should then be set as environment variables for the voice agent deployment.
 
