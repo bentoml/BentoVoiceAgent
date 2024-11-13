@@ -8,9 +8,10 @@ python:
   requirements_txt: requirements.txt
 docker:
   python_version: "3.11"
-  cuda_version: 12.1
   system_packages:
     - ffmpeg
 envs:
   - name: OPENAI_SERVICE_URL
   - name: XTTS_SERVICE_URL
+  - name: LD_LIBRARY_PATH
+    value: "/usr/local/lib/python3.11/site-packages/nvidia/cublas/lib:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
