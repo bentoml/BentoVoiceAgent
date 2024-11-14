@@ -14,4 +14,4 @@ envs:
   - name: OPENAI_SERVICE_URL
   - name: XTTS_SERVICE_URL
   - name: LD_LIBRARY_PATH
-    value: "/usr/local/lib/python3.11/site-packages/nvidia/cublas/lib:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
+    value: "/app/.venv/lib/python3.11/site-packages/nvidia/cublas/lib:/app/.venv/lib/python3.11/site-packages/nvidia/cudnn/lib:/usr/local/lib/python3.11/site-packages/nvidia/cublas/lib:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
