@@ -6,18 +6,15 @@ from pipecat.frames.frames import EndFrame, LLMMessagesFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
 from pipecat.pipeline.task import PipelineParams, PipelineTask
-from pipecat.processors.aggregators.llm_response import (
-    LLMAssistantResponseAggregator,
-    LLMUserResponseAggregator,
-)
-from pipecat.services.cartesia import CartesiaTTSService
-from pipecat.services.openai import OpenAILLMService
+from pipecat.services.openai import OpenAILLMService, OpenAILLMContext
 from pipecat.transports.network.fastapi_websocket import (
     FastAPIWebsocketTransport,
     FastAPIWebsocketParams,
 )
 from pipecat.vad.silero import SileroVADAnalyzer
 from pipecat.serializers.twilio import TwilioFrameSerializer
+
+from openai.types.chat import ChatCompletionToolParam
 
 from loguru import logger
 
@@ -63,22 +60,61 @@ async def run_bot(websocket_client, stream_sid, whisper_model):
     messages = [
         {
             "role": "system",
-            "content": "You are a helpful LLM assistant in an audio call. Your name is Jane. You work for Bento-ML. Your goal is to demonstrate your capabilities in a succinct way. Your output will be converted to audio so don't include special characters in your answers. Respond to what the user said in a helpful way while keeping your message as brief as possible. First greet with 'Hello, I am Jane from Bento-ML, how may I help you?'",
+            "content": "You are a helpful LLM assistant in an audio call. Your name is Jane. You work for Bento ML. Your goal is to demonstrate your capabilities in a succinct way. Your output will be converted to audio so don't include special characters in your answers. Respond to what the user said in a helpful way while keeping your message as brief as possible. First greet with 'Hello, I am Jane from Bento ML, how may I help you?'",
         },
     ]
 
-    tma_in = LLMUserResponseAggregator(messages)
-    tma_out = LLMAssistantResponseAggregator(messages)
+    tools = [
+        ChatCompletionToolParam(
+            type="function",
+            function={
+                "name": "get_deployment_count",
+                "description": "Get the deployment count in a region of a specific status.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "region": {
+                            "type": "string",
+                            "enum": ["north america", "europe", "asia"],
+                            "description": "The region where the deployments are located.",
+                        },
+                        "status": {
+                            "type": "string",
+                            "enum": ["running", "scaled to zero", "terminated"],
+                            "description": "The status of the deployment.",
+                        },
+                    },
+                    "required": ["region", "status"],
+                },
+            },
+        ),
+    ]
 
+    async def start_function(function_name, llm, context):
+        logger.debug(f"Starting function: {function_name}")
+
+    async def exec_function(function_name, tool_call_id, args, llm, context, result_callback):
+        logger.debug(f"Executing function: {function_name}")
+
+        await result_callback({"deployment_count": 10})
+
+    llm.register_function(
+        "get_deployment_count",
+        exec_function,
+        start_callback=start_function,
+    )
+
+    context = OpenAILLMContext(messages, tools)
+    context_aggregator = llm.create_context_aggregator(context)
     pipeline = Pipeline(
         [
             transport.input(),  # Websocket input from client
             stt,  # Speech-To-Text
-            tma_in,  # User responses
+            context_aggregator.user(),  # User responses
             llm,  # LLM
             tts,  # Text-To-Speech
             transport.output(),  # Websocket output to client
-            tma_out,  # LLM responses
+            context_aggregator.assistant(),  # LLM responses
         ]
     )
 
