@@ -2,6 +2,8 @@
 
 This repository demonstrates how to build a voice agent using open-source Large Language Models (LLMs), text-to-speech (TTS), and speech-to-text (STT) models. It utilizes [Pipecat](https://github.com/pipecat-ai/pipecat) voice pipeline and is deployed with [BentoML](https://github.com/bentoml/BentoML). The voice agent is accessible via a phone number, leveraging Twilio as the communication transport. This example can be easily extended to incorporate additional voice agent features and functionality.
 
+![service architecture](service_arch.png)
+
 This voice agent the following models:
 
 - Llama 3.1
@@ -24,6 +26,8 @@ Deploy the LLM and XTTS models by following the instructions provided in their r
 
 - Deploy LLM with [BentoVLLM](https://github.com/bentoml/BentoVLLM/tree/main/llama3.1-70b-instruct-awq)
 - Deploy XTTS with [BentoXTTSStreaming](https://github.com/bentoml/BentoXTTSStreaming)
+
+![flow_diagram](flow_diagram.png)
 
 Once the models are deployed, you can obtain their API endpoints from BentoCloud. These endpoints should then be set as environment variables for the voice agent deployment.
 
