@@ -12,6 +12,8 @@ This voice agent the following models:
 
 The LLM and XTTS models are deployed as separate API endpoints, as outlined in the instructions below. These API endpoints are provided to the voice agent through environment variables.
 
+See [here](https://docs.bentoml.com/en/latest/examples/overview.html) for a full list of BentoML example projects.
+
 ## Prerequisites
 
 This repository has been verified with Python 3.11 and BentoML 1.3.9.
