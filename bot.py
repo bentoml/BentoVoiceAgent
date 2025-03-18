@@ -43,7 +43,7 @@ async def run_bot(websocket_client, stream_sid, whisper_model):
     llm = OpenAILLMService(
         base_url=openai_base_url,
         api_key="n/a",
-        model="hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4",
+        model="meta-llama/Meta-Llama-3.1-8B-Instruct",
     )
 
     stt = BentoWhisperSTTService(model=whisper_model)
@@ -98,13 +98,14 @@ async def run_bot(websocket_client, stream_sid, whisper_model):
 
         await result_callback({"deployment_count": 10})
 
-    llm.register_function(
-        "get_deployment_count",
-        exec_function,
-        start_callback=start_function,
-    )
+    # llm.register_function(
+    #     "get_deployment_count",
+    #     exec_function,
+    #     start_callback=start_function,
+    # )
 
-    context = OpenAILLMContext(messages, tools)
+    context = OpenAILLMContext(messages)
+    # context = OpenAILLMContext(messages, tools)
     context_aggregator = llm.create_context_aggregator(context)
     pipeline = Pipeline(
         [
